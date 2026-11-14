@@ -1,0 +1,50 @@
+# ============================================================
+#  ACE 工具箱 · 功能脚本（云端下发，客户端只负责执行）
+#  格式：动作|操作|参数1|参数2
+#  # 开头是注释；多值用英文逗号分隔；管道符不能出现在参数里
+#  改这个文件就能改客户端的行为 —— 客户端里没有任何 ACE 相关的知识
+# ============================================================
+
+# ---------- 安装 ACE（含启用预启动模式）----------
+install|findsetup|ACE-Setup64.exe|Uninstaller.exe
+install|setup|install,-install,/install
+install|extract|C:\Program Files\AntiCheatExpert
+install|run|C:\Program Files\AntiCheatExpert\ACE-Tray.exe|start
+
+# ---------- 启动 / 激活（免重启）----------
+start|scfilter|AntiCheatExpert,ACE-|ACE_|ace-game|SGuard|TenioDL
+start|scstart
+start|extract|C:\Program Files\AntiCheatExpert
+start|run|C:\Program Files\AntiCheatExpert\ACE-Tray.exe|start
+
+# ---------- 静默关闭 ----------
+close|kill|ACE-Tray.exe,ACE-TrayV.exe,ACE-Service64.exe,SGuard64.exe,SGuardSvc64.exe,SGuardSvc32.exe,ACE-BOOT.exe,ACE-Guard Service,ACE-Guard Client,^ACE-,^ACE_ ,^SGuard,^AntiCheat
+close|scfilter|AntiCheatExpert,ACE-|ACE_|ace-game|SGuard|TenioDL
+close|scstop
+
+# ---------- 彻底卸载 ----------
+uninstall|kill|ACE-Tray.exe,ACE-TrayV.exe,ACE-Service64.exe,SGuard64.exe,SGuardSvc64.exe,SGuardSvc32.exe,ACE-BOOT.exe,ACE-Guard Service,ACE-Guard Client,^ACE-,^ACE_ ,^SGuard,^AntiCheat
+uninstall|scfilter|AntiCheatExpert,ACE-|ACE_|ace-game|SGuard|TenioDL
+uninstall|scdel
+uninstall|deldir|C:\Program Files\AntiCheatExpert
+uninstall|deldir|C:\Program Files (x86)\AntiCheatExpert
+uninstall|deldir|C:\ProgramData\AntiCheatExpert
+uninstall|regdel|HKLM|SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\AntiCheatExpert
+uninstall|regdel|HKLM|SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\AntiCheatExpert
+uninstall|regdel|HKCU|SOFTWARE\AppDataLow\AntiCheatExpert
+
+# ============================================================
+#  v2.0.6 新增：关闭 ACE（云下发）
+#  「关闭 ACE」按钮按这里的步骤执行；没有这一段则走客户端内置流程
+#  顺序：先禁用启动（断后路）→ 再停 → 再强卸出内存 → 最后清自启
+# ============================================================
+disable|kill|ACE-Tray.exe,ACE-TrayV.exe,ACE-Service64.exe,SGuard64.exe,SGuardSvc64.exe,SGuardSvc32.exe,ACE-BOOT.exe,ACE-Guard Service,ACE-Guard Client,^ACE-,^ACE_ ,^SGuard,^AntiCheat
+disable|scfilter|AntiCheatExpert,ACE-|ACE_|ace-game|SGuard|TenioDL
+disable|scdisable
+disable|scstop
+disable|unload
+disable|schdel|ACE,SGuard,AntiCheat
+disable|rundel|ACE,SGuard,AntiCheat
+
+# ---------- v3.0.7：限制 ACE 的目标清单（不再内置在 exe 里）----------
+limit|targets|ACE-Guard Service,ACE-Guard Client,ACE-Guard Client.exe,ACE-Tray.exe,ACE-TrayV.exe,ACE-Service64.exe,ACE-BOOT.exe,ACE-BOOT.sys,SGuard64.exe,SGuardSvc64.exe,SGuardSvc32.exe,SGuard64,SGuardSvc32,^ACE-,^SGuard
